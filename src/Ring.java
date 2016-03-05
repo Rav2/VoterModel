@@ -47,6 +47,32 @@ public class Ring
 		adjacencyMatrix = new int[size][size]; // reset matrix
 		degrees = new int[size]; // reset degrees distribution
 		fixedDegree = k;
+
+		for (int i=0; i < size ; i++)
+		{
+				for(int l = 0; l < Math.floor(k/2); l++ )
+				{
+					//System.out.printf("I=%d; i - (l + 1) + size mod size = %d %n", i, ((i-(l+1) + size) % size));
+					adjacencyMatrix[i][(i+l+1) % size] = 1;
+					adjacencyMatrix[i][(i-(l+1) + size) % size] = 1;
+				}
+				int jump = (k+1)/2;
+				if(k%2==1)
+				{
+					if(i < jump)
+					{
+						adjacencyMatrix[i][i + jump] = 1;
+						adjacencyMatrix[i + jump][i] = 1;
+					}
+					else
+					{
+						adjacencyMatrix[i][i + jump] = 1;
+						adjacencyMatrix[i + jump][i] = 1;
+					}
+
+				}
+		}
+
 		
 		/*
 		W tym miejscu powinien znajdować się kod, który wygeneruje udekorowany pierścień.
@@ -109,7 +135,7 @@ public class Ring
 	// For testing purposes
 	public static void main(String[] args) 
 	{
-		Ring r1 = new Ring(36,11);
+		Ring r1 = new Ring(9,4);
 		int[][] am = r1.getAdjacencyMatrix();
 		int[] deg = r1.getDegrees();
 		for(int i=0; i<r1.getSize(); i++)
