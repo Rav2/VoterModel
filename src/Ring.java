@@ -48,6 +48,7 @@ public class Ring
 		degrees = new int[size]; // reset degrees distribution
 		fixedDegree = k;
 
+		int jump = (k+1)/2;
 		for (int i=0; i < size ; i++)
 		{
 				for(int l = 0; l < Math.floor(k/2); l++ )
@@ -56,19 +57,15 @@ public class Ring
 					adjacencyMatrix[i][(i+l+1) % size] = 1;
 					adjacencyMatrix[i][(i-(l+1) + size) % size] = 1;
 				}
-				int jump = (k+1)/2;
+
 				if(k%2==1)
 				{
-					if(i < jump)
+					if(Math.floor(i/jump) % 2 ==0 && (i + jump < size-1))
 					{
-						adjacencyMatrix[i][i + jump] = 1;
-						adjacencyMatrix[i + jump][i] = 1;
+							adjacencyMatrix[i][i + jump] = 1;
+							adjacencyMatrix[i + jump][i] = 1;
 					}
-					else
-					{
-						adjacencyMatrix[i][i + jump] = 1;
-						adjacencyMatrix[i + jump][i] = 1;
-					}
+
 
 				}
 		}
@@ -135,7 +132,7 @@ public class Ring
 	// For testing purposes
 	public static void main(String[] args) 
 	{
-		Ring r1 = new Ring(9,4);
+		Ring r1 = new Ring(12,3);
 		int[][] am = r1.getAdjacencyMatrix();
 		int[] deg = r1.getDegrees();
 		for(int i=0; i<r1.getSize(); i++)
