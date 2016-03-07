@@ -152,13 +152,6 @@ public class Ring
 		return apl;
 	}
 
-	//Additional functions
-	public static float average(int[] array)
-	{
-		float sum = 0;
-		for(int x:array){sum += x;}
-		return sum / (float)(array.length);
-	}
 	
 	// Getters
 	public int getSize(){return size;}
@@ -172,17 +165,29 @@ public class Ring
 	{
 		try
 		{
-			Ring r1 = new Ring(32,12);
+			//TOPOLOGY
+			Ring r1 = new Ring(32,13);
 			int[][] am = r1.getAdjacencyMatrix();
 			int[] deg = r1.getDegrees();
-			for (int i = 0; i < r1.getSize(); i++)
-			{
-				for (int j = 0; j < r1.getSize(); j++) System.out.printf(" %d", am[i][j]);
-				System.out.println();
-			}
+
+			String mes1 = Miscellaneous.displayMatrix(r1.getSize(), am);
+			System.out.println(mes1);
 			System.out.println("\nDegrees:");
 			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
-			System.out.printf("\nAverage degree: %.2f", average(deg));
+			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
+
+			VoterModel model = new VoterModel(r1.adjacencyMatrix , 4, 1, "");
+			model.dynamics(r1.adjacencyMatrix);
+			//DYNAMICS
+			System.out.println("\n\nTesting dynamics\n");
+			String mes2 = Miscellaneous.displayMatrix(r1.getSize(), am);
+			System.out.print(mes2);
+			System.out.println("\nDegrees:");
+			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
+			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
+
+			Miscellaneous.writeToFile("test", "przed" + mes1 + "\npo" +mes2);
+
 		}
 		catch (Exception e)
 		{
