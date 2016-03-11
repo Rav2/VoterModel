@@ -1,4 +1,7 @@
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class Ring 
 {
@@ -6,7 +9,7 @@ public class Ring
 	int size;
 	int fixedDegree;
 	double probability;
-	int[][] adjacencyMatrix;
+	ArrayList<ArrayList<Integer>> adjacencyList;
 	int[] degrees;
 	
 	// Constructors
@@ -14,10 +17,11 @@ public class Ring
 	{
 		size = n;
 		fixedDegree = 2; // minimal degree for the ring is 2
-		probability = 0.0;
-		adjacencyMatrix = new int[size][size];
+		probability = 1.0;
+		adjacencyList = new ArrayList<ArrayList<Integer>>(size);
+		for (int ii = 0; ii<size; ii++ )adjacencyList.add(new ArrayList<Integer>());
 		degrees = new int[size];
-		fillAdjacencyMatrix(fixedDegree);
+		filladjacencyList(fixedDegree);
 	}
 	
 	public Ring(int n, int k) throws Exception// constructor #2
@@ -29,10 +33,11 @@ public class Ring
 
 		size = n;
 		fixedDegree = k;
-		probability = 0.0;
-		adjacencyMatrix = new int[size][size];
+		probability = 1.0;
+		adjacencyList = new ArrayList<ArrayList<Integer>>(size);
+		for (int ii = 0; ii<size; ii++ )adjacencyList.add(new ArrayList<Integer>());
 		degrees = new int[size];
-		fillAdjacencyMatrix(fixedDegree);
+		filladjacencyList(fixedDegree);
 	}
 	
 	public Ring(int n, int k, double p) throws Exception// constructor #3
@@ -45,17 +50,21 @@ public class Ring
 		size = n;
 		fixedDegree = k;
 		probability = p;
-		adjacencyMatrix = new int[size][size];
+		adjacencyList = new ArrayList<ArrayList<Integer>>(size);
+		for (int ii = 0; ii<size; ii++ )adjacencyList.add(new ArrayList<Integer>());
 		degrees = new int[size];
-		fillAdjacencyMatrix(fixedDegree);
+		filladjacencyList(fixedDegree);
 		rewireConnections(probability);
 	}
 	
 	// Computing methods
-	public int[][] fillAdjacencyMatrix(int k) // create connection between nodes
+	public ArrayList<ArrayList<Integer>> filladjacencyList(int k) // create connection between nodes
 	{
 
-		adjacencyMatrix = new int[size][size]; // reset matrix
+		//LISTS ARE ENUMERATED STARTING FROM 0 UP TO SIZE-1
+		adjacencyList = new ArrayList<ArrayList<Integer>>(size);
+		for (int ii = 0; ii<size; ii++ )adjacencyList.add(new ArrayList<Integer>());
+		// reset list
 		degrees = new int[size]; // reset degrees distribution
 		fixedDegree = k;
 
@@ -65,11 +74,11 @@ public class Ring
 			for(int i=0; i<size; i++)
 				for(int j=i+1; j< size; j++)
 				{
-					adjacencyMatrix[i][j]=1;
-					adjacencyMatrix[j][i]=1;
+					adjacencyList.get(i).add(j);
+					adjacencyList.get(j).add(i);
 				}
-			degrees=computeDegrees(adjacencyMatrix);
-			return adjacencyMatrix;
+			degrees=computeDegrees(adjacencyList);
+			return adjacencyList;
 		}
 		else
 		{
@@ -78,66 +87,66 @@ public class Ring
 			{
 				for (int l = 0; l < Math.floor(k / 2); l++)
 				{
-					adjacencyMatrix[i][(i + l + 1) % size] = 1;
-					adjacencyMatrix[i][(i - (l + 1) + size) % size] = 1;
+					adjacencyList.get(i).add((i + l + 1) % size);
+					adjacencyList.get(i).add((i - (l + 1) + size) % size);
 				}
 
 				if (k % 2 == 1)
 				{
 					if (Math.floor(i / jump) % 2 == 0 && (i + jump < size - 1))
 					{
-						adjacencyMatrix[i][i + jump] = 1;
-						adjacencyMatrix[i + jump][i] = 1;
+						adjacencyList.get(i).add(i + jump);
+						adjacencyList.get(i + jump).add(i);
 					}
 				}
 			}
-			degrees=computeDegrees(adjacencyMatrix);
-			return adjacencyMatrix;
+			degrees=computeDegrees(adjacencyList);
+			return adjacencyList;
 		}
 	}
 	
-	public int[][] rewireConnections(double p) // rewire connections with probability p
+	public ArrayList<ArrayList<Integer>> rewireConnections(double p) throws Exception// rewire connections with probability p
 	{
 		probability = p;
 		Random r = new Random();
-		int newNode = -1;
-		
-		// loop over existing connections
-		for(int i=0; i<size-1; i++)
-			for(int j=i+1; j<size; j++)
-				if(adjacencyMatrix[i][j]>0)
+		for(int ii=0; ii<size; ii++)
+		{
+			if(r.nextDouble() < probability)
+			{
+				int length = adjacencyList.get(ii).size();
+				if(length>0)
 				{
-					if(r.nextDouble()<=probability)
+					int randIndex = r.nextInt(length);
+					Integer neighbour = adjacencyList.get(ii).get(randIndex);
+					adjacencyList.get(ii).remove(randIndex);
+					if (!adjacencyList.get(neighbour).remove(new Integer(ii)))
 					{
-						// find new connection
-						
-
-						// update adjacency matrix
-						
-
-
-
-						// update degrees of the nodes
-						
-
+						throw new Exception(String.format("You tried to " + "remove non-existing %d from list no %d!", ii, neighbour));
 					}
 				}
-		
-		return adjacencyMatrix;
+
+				Integer newNeighbour = ii;
+
+				do
+				{
+					newNeighbour = r.nextInt(size - 1);
+				}
+				while (newNeighbour == ii || adjacencyList.get(ii).contains(newNeighbour));
+
+				adjacencyList.get(ii).add(newNeighbour);
+				adjacencyList.get(newNeighbour).add(ii);
+			}
+		}
+		return adjacencyList;
 	}
 
-	private int[] computeDegrees(int[][] matrix)
+	private int[] computeDegrees(ArrayList<ArrayList<Integer>> list)
 	{
 		int[] degreesArray = new int[size];
 		for(int i=0; i<size; i++)
-			for(int j=i; j<size; j++)
-			{
-				if(matrix[i][j]==1)
-				{
-					degreesArray[i] = degreesArray[i]+1;
-					degreesArray[j] = degreesArray[j]+1;
-				}
-			}
+		{
+			degreesArray[i] = list.get(i).size();
+		}
 		return degreesArray;
 	}
 
@@ -152,11 +161,20 @@ public class Ring
 		return apl;
 	}
 
+	public ArrayList<ArrayList<Integer>> sortList(ArrayList<ArrayList<Integer>> list)
+	{
+		for(int ii=0; ii<list.size(); ii++)
+		{
+			Collections.sort(list.get(ii));
+		}
+		return list;
+	}
+
 	
 	// Getters
 	public int getSize(){return size;}
 	public int getFixedDegree(){return fixedDegree;}
-	public int[][] getAdjacencyMatrix(){return adjacencyMatrix;}
+	public ArrayList<ArrayList<Integer>> getadjacencyList(){return adjacencyList;}
 	public double getProbability(){return probability;}
 	public int[] getDegrees(){return degrees;}
 	
@@ -166,32 +184,35 @@ public class Ring
 		try
 		{
 			//TOPOLOGY
-			Ring r1 = new Ring(32,13);
-			int[][] am = r1.getAdjacencyMatrix();
+			Ring r1 = new Ring(30,10);
+			ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
 			int[] deg = r1.getDegrees();
 
-			String mes1 = Miscellaneous.displayMatrix(r1.getSize(), am);
+			String mes1 = Miscellaneous.displayList(r1.getSize(), am, true);
 			System.out.println(mes1);
 			System.out.println("\nDegrees:");
 			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
 			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
-
-			VoterModel model = new VoterModel(r1.adjacencyMatrix , 4, 1, "");
-			model.dynamics(r1.adjacencyMatrix);
+			for(int kk=0; kk<100; kk++){r1.rewireConnections(1);}
+			String mes2 = Miscellaneous.displayList(r1.getSize(), am, true);
+			System.out.print("\n" + mes2);
+//			VoterModel model = new VoterModel(r1.adjacencyList , 4, 1, "");
+//			model.dynamics(r1.adjacencyList);
 			//DYNAMICS
-			System.out.println("\n\nTesting dynamics\n");
-			String mes2 = Miscellaneous.displayMatrix(r1.getSize(), am);
-			System.out.print(mes2);
-			System.out.println("\nDegrees:");
-			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
-			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
-
-			Miscellaneous.writeToFile("test", "przed" + mes1 + "\npo" +mes2);
+//			System.out.println("\n\nTesting dynamics\n");
+//			String mes2 = Miscellaneous.displayMatrix(r1.getSize(), am);
+//			System.out.print(mes2);
+//			System.out.println("\nDegrees:");
+//			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
+//			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
+//
+			Miscellaneous.writeToFile("test", "BEFORE\n" + mes1 + "\nAFTER\n" + mes2);
 
 		}
 		catch (Exception e)
 		{
-			System.out.printf("Exception catched! %n %s", e.getMessage());
+			System.out.print("\n");
+			e.printStackTrace();
 		}
 
 		
