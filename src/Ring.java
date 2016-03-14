@@ -105,38 +105,41 @@ public class Ring
 		}
 	}
 	
-	public ArrayList<ArrayList<Integer>> rewireConnections(double p) throws Exception// rewire connections with probability p
+	public ArrayList<ArrayList<Integer>> rewireConnections(double p) // rewire connections with probability p
 	{
 		probability = p;
 		Random r = new Random();
 		for(int ii=0; ii<size; ii++)
 		{
-			if(r.nextDouble() < probability)
+			int length = adjacencyList.get(ii).size();
+			for(int jj=0; jj<length; jj++)
 			{
-				int length = adjacencyList.get(ii).size();
-				if(length>0)
+				if(r.nextDouble() < probability)
 				{
-					int randIndex = r.nextInt(length);
-					Integer neighbour = adjacencyList.get(ii).get(randIndex);
-					adjacencyList.get(ii).remove(randIndex);
-					if (!adjacencyList.get(neighbour).remove(new Integer(ii)))
+					Integer neighbour = adjacencyList.get(ii).get(jj);
+					adjacencyList.get(ii).remove(jj);
+					for(int kk=0; kk<adjacencyList.get(neighbour).size(); kk++)
 					{
-						throw new Exception(String.format("You tried to " + "remove non-existing %d from list no %d!", ii, neighbour));
+						if(adjacencyList.get(neighbour).get(kk) == ii)
+						{
+							adjacencyList.get(neighbour).remove(kk);
+							kk = adjacencyList.get(neighbour).size();
+						}
 					}
+
+					Integer newNeighbour = ii;
+					do
+					{
+						newNeighbour = r.nextInt(size);
+					}
+					while (newNeighbour == ii || adjacencyList.get(ii).contains(newNeighbour));
+
+					adjacencyList.get(ii).add(newNeighbour);
+					adjacencyList.get(newNeighbour).add(ii);
 				}
-
-				Integer newNeighbour = ii;
-
-				do
-				{
-					newNeighbour = r.nextInt(size - 1);
-				}
-				while (newNeighbour == ii || adjacencyList.get(ii).contains(newNeighbour));
-
-				adjacencyList.get(ii).add(newNeighbour);
-				adjacencyList.get(newNeighbour).add(ii);
 			}
 		}
+		degrees=computeDegrees(adjacencyList);
 		return adjacencyList;
 	}
 
@@ -184,7 +187,7 @@ public class Ring
 		try
 		{
 			//TOPOLOGY
-			Ring r1 = new Ring(30,10);
+			Ring r1 = new Ring(30,3);
 			ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
 			int[] deg = r1.getDegrees();
 
@@ -193,9 +196,15 @@ public class Ring
 			System.out.println("\nDegrees:");
 			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
 			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
-			for(int kk=0; kk<100; kk++){r1.rewireConnections(1);}
-			String mes2 = Miscellaneous.displayList(r1.getSize(), am, true);
+
+			for(int kk=0; kk<10; kk++){r1.rewireConnections(0.5);}
+			String mes2 = Miscellaneous.displayList(r1.getSize(), r1.sortList(am), true);
 			System.out.print("\n" + mes2);
+
+			System.out.println("\nDegrees:");
+			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
+			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
+
 //			VoterModel model = new VoterModel(r1.adjacencyList , 4, 1, "");
 //			model.dynamics(r1.adjacencyList);
 			//DYNAMICS
@@ -206,7 +215,7 @@ public class Ring
 //			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
 //			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
 //
-			Miscellaneous.writeToFile("test", "BEFORE\n" + mes1 + "\nAFTER\n" + mes2);
+			Miscellaneous.writeToFile("\ntest", "BEFORE\n" + mes1 + "\nAFTER\n" + mes2);
 
 		}
 		catch (Exception e)
