@@ -1,9 +1,8 @@
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
-import java.util.logging.Logger;
 
-public class Ring 
+public class Ring
 {
 	// Data fields
 	int size;
@@ -11,7 +10,7 @@ public class Ring
 	double probability;
 	ArrayList<ArrayList<Integer>> adjacencyList;
 	int[] degrees;
-	
+
 	// Constructors
 	public Ring(int n) // constructor #1
 	{
@@ -23,7 +22,7 @@ public class Ring
 		degrees = new int[size];
 		filladjacencyList(fixedDegree);
 	}
-	
+
 	public Ring(int n, int k) throws Exception// constructor #2
 	{
 		if(k<2)
@@ -39,7 +38,7 @@ public class Ring
 		degrees = new int[size];
 		filladjacencyList(fixedDegree);
 	}
-	
+
 	public Ring(int n, int k, double p) throws Exception// constructor #3
 	{
 		if(k<2)
@@ -56,7 +55,7 @@ public class Ring
 		filladjacencyList(fixedDegree);
 		rewireConnections(probability);
 	}
-	
+
 	// Computing methods
 	public ArrayList<ArrayList<Integer>> filladjacencyList(int k) // create connection between nodes
 	{
@@ -76,8 +75,9 @@ public class Ring
 				{
 					adjacencyList.get(i).add(j);
 					adjacencyList.get(j).add(i);
+					degrees[i]++;
+					degrees[j]++;
 				}
-			degrees=computeDegrees(adjacencyList);
 			return adjacencyList;
 		}
 		else
@@ -89,6 +89,8 @@ public class Ring
 				{
 					adjacencyList.get(i).add((i + l + 1) % size);
 					adjacencyList.get(i).add((i - (l + 1) + size) % size);
+					degrees[i]++;
+					degrees[i]++;
 				}
 
 				if (k % 2 == 1)
@@ -97,14 +99,15 @@ public class Ring
 					{
 						adjacencyList.get(i).add(i + jump);
 						adjacencyList.get(i + jump).add(i);
+						degrees[i]++;
+						degrees[i + jump]++;
 					}
 				}
 			}
-			degrees=computeDegrees(adjacencyList);
 			return adjacencyList;
 		}
 	}
-	
+
 	public ArrayList<ArrayList<Integer>> rewireConnections(double p) // rewire connections with probability p
 	{
 		probability = p;
@@ -118,11 +121,13 @@ public class Ring
 				{
 					Integer neighbour = adjacencyList.get(ii).get(jj);
 					adjacencyList.get(ii).remove(jj);
+					degrees[ii]--;
 					for(int kk=0; kk<adjacencyList.get(neighbour).size(); kk++)
 					{
 						if(adjacencyList.get(neighbour).get(kk) == ii)
 						{
 							adjacencyList.get(neighbour).remove(kk);
+							degrees[neighbour]--;
 							kk = adjacencyList.get(neighbour).size();
 						}
 					}
@@ -136,14 +141,15 @@ public class Ring
 
 					adjacencyList.get(ii).add(newNeighbour);
 					adjacencyList.get(newNeighbour).add(ii);
+					degrees[ii]++;
+					degrees[newNeighbour]++;
 				}
 			}
 		}
-		degrees=computeDegrees(adjacencyList);
 		return adjacencyList;
 	}
 
-	private int[] computeDegrees(ArrayList<ArrayList<Integer>> list)
+	/*private int[] computeDegrees(ArrayList<ArrayList<Integer>> list)
 	{
 		int[] degreesArray = new int[size];
 		for(int i=0; i<size; i++)
@@ -151,15 +157,24 @@ public class Ring
 			degreesArray[i] = list.get(i).size();
 		}
 		return degreesArray;
-	}
+	}*/
 
 	public double computeAveragePathLength()
 	{
 		double apl = 0.0;
+
+		for (int i = 0; i < size; i++){
+			for (int j = 0; j < adjacencyList.get(i).size(); j++){
+				apl++;
+			}
+		}
+
+		apl /= size * (size-1);
+
 		/*
-		Funkcja, która liczy średnią najkrótszą drogę w sieci.
+		Funkcja, ktĂłra liczy Ĺ›redniÄ… najkrĂłtszÄ… drogÄ™ w sieci.
 		https://en.wikipedia.org/wiki/Average_path_length
-		W sieci nieskierowanej d(i,j) = d(j,i) zatem we wzorze pojawia się liczba 2 w liczniku zamiast 1.
+		W sieci nieskierowanej d(i,j) = d(j,i) zatem we wzorze pojawia siÄ™ liczba 2 w liczniku zamiast 1.
 		*/
 		return apl;
 	}
@@ -173,16 +188,16 @@ public class Ring
 		return list;
 	}
 
-	
+
 	// Getters
 	public int getSize(){return size;}
 	public int getFixedDegree(){return fixedDegree;}
 	public ArrayList<ArrayList<Integer>> getadjacencyList(){return adjacencyList;}
 	public double getProbability(){return probability;}
 	public int[] getDegrees(){return degrees;}
-	
+
 	// For testing purposes
-	public static void main(String[] args) 
+	public static void main(String[] args)
 	{
 		try
 		{
@@ -190,32 +205,33 @@ public class Ring
 			Ring r1 = new Ring(30,3);
 			ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
 			int[] deg = r1.getDegrees();
+			VoterModel model = new VoterModel(r1.adjacencyList , 20, 1, 1, "");
+			model.dynamics(r1.adjacencyList);
 
-			String mes1 = Miscellaneous.displayList(r1.getSize(), am, true);
+			String mes1 = Miscellaneous.displayList(r1.getSize(), am, true, model.states);
 			System.out.println(mes1);
 			System.out.println("\nDegrees:");
 			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
 			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
 
 			for(int kk=0; kk<10; kk++){r1.rewireConnections(0.5);}
-			String mes2 = Miscellaneous.displayList(r1.getSize(), r1.sortList(am), true);
+			String mes2 = Miscellaneous.displayList(r1.getSize(), r1.sortList(am), true, model.states);
 			System.out.print("\n" + mes2);
 
 			System.out.println("\nDegrees:");
 			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
 			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
 
-//			VoterModel model = new VoterModel(r1.adjacencyList , 4, 1, "");
-//			model.dynamics(r1.adjacencyList);
+
 			//DYNAMICS
-//			System.out.println("\n\nTesting dynamics\n");
-//			String mes2 = Miscellaneous.displayMatrix(r1.getSize(), am);
-//			System.out.print(mes2);
-//			System.out.println("\nDegrees:");
-//			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
-//			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
-//
-			Miscellaneous.writeToFile("\ntest", "BEFORE\n" + mes1 + "\nAFTER\n" + mes2);
+			System.out.println("\n\nTesting dynamics\n");
+			mes2 = Miscellaneous.displayList(r1.getSize(), r1.sortList(am), true, model.states);
+			System.out.print(mes2);
+			System.out.println("\nDegrees:");
+			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
+			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
+
+			//Miscellaneous.writeToFile("\ntest", "BEFORE\n" + mes1 + "\nAFTER\n" + mes2);
 
 		}
 		catch (Exception e)
@@ -224,7 +240,7 @@ public class Ring
 			e.printStackTrace();
 		}
 
-		
+
 	}
 
 }

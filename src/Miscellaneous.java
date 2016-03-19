@@ -1,12 +1,9 @@
 /**
  * Created by rafalmaselek on 07.03.2016.
  */
-import com.sun.javafx.binding.StringFormatter;
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Miscellaneous
@@ -18,14 +15,15 @@ public class Miscellaneous
         return sum / (float)(array.length);
     }
 
-    public static String displayList(int size, ArrayList<ArrayList<Integer>> list, boolean showHeaders)
+    public static String displayList(int size, ArrayList<ArrayList<Integer>> list, boolean showHeaders, int[] state)
     {
         String message = new String();
-        if(showHeaders) {message+="No\tNeighbours\n";}
+        if(showHeaders) {message+="No\tNeighbours\n Opinion\n";}
         for (int i = 0; i < size; i++)
         {
             message += String.format("%d\t",i);
-            for (int j = 0; j < list.get(i).size(); j++) message += String.format(" %d", list.get(i).get(j));
+            for (int j = 0; j < list.get(i).size(); j++) message += String.format(" %d", (list.get(i).get(j)));
+            message += "\t\t\t" + state[i];
             message += '\n';
         }
         return message;
