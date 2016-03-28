@@ -2,11 +2,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class VoterModel {
-	int numberOfExecutions;
 	int numberOfSimulationSteps;
 	int numberOfRealizations;
 	String filePath;
-	//ArrayList<Integer> states;
 	int[] states;
 	double magnetization;
 	int interfaces;
@@ -14,13 +12,11 @@ public class VoterModel {
 	ArrayList<ArrayList<Integer>> adjList;
 	int size;
 
-	public VoterModel(ArrayList<ArrayList<Integer>> list, int simSteps, int realizations, int executions, String path){
+	public VoterModel(ArrayList<ArrayList<Integer>> list, int simSteps, int realizations, String path){
 		numberOfSimulationSteps = simSteps;
 		numberOfRealizations = realizations;
-		numberOfExecutions = executions;
 		size = list.size();
 		filePath = path;
-		//states = new ArrayList<Integer>(size);
 		states = new int[size];
 		drawStates(size);
 		adjList = new ArrayList<ArrayList<Integer>>(size);
@@ -29,7 +25,7 @@ public class VoterModel {
 		interfaces = 0;
 	}
 
-	//losuje opinie 0 lub 1
+	//losuje opinie -1 lub 1
 	void drawStates(int length){
 		Random r = new Random();
 		for (int i = 0; i < length; i++) {

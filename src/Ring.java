@@ -196,51 +196,5 @@ public class Ring
 	public double getProbability(){return probability;}
 	public int[] getDegrees(){return degrees;}
 
-	// For testing purposes
-	public static void main(String[] args)
-	{
-		try
-		{
-			//TOPOLOGY
-			Ring r1 = new Ring(30,3);
-			ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
-			int[] deg = r1.getDegrees();
-			VoterModel model = new VoterModel(r1.adjacencyList , 20, 1, 1, "");
-			model.dynamics(r1.adjacencyList);
-
-			String mes1 = Miscellaneous.displayList(r1.getSize(), am, true, model.states);
-			System.out.println(mes1);
-			System.out.println("\nDegrees:");
-			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
-			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
-
-			for(int kk=0; kk<10; kk++){r1.rewireConnections(0.5);}
-			String mes2 = Miscellaneous.displayList(r1.getSize(), r1.sortList(am), true, model.states);
-			System.out.print("\n" + mes2);
-
-			System.out.println("\nDegrees:");
-			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
-			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
-
-
-			//DYNAMICS
-			System.out.println("\n\nTesting dynamics\n");
-			mes2 = Miscellaneous.displayList(r1.getSize(), r1.sortList(am), true, model.states);
-			System.out.print(mes2);
-			System.out.println("\nDegrees:");
-			for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
-			System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
-
-			//Miscellaneous.writeToFile("\ntest", "BEFORE\n" + mes1 + "\nAFTER\n" + mes2);
-
-		}
-		catch (Exception e)
-		{
-			System.out.print("\n");
-			e.printStackTrace();
-		}
-
-
-	}
 
 }
