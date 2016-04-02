@@ -1,10 +1,9 @@
 /**
  * Created by rafalmaselek on 07.03.2016.
  */
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 public class Miscellaneous
 {
@@ -29,13 +28,43 @@ public class Miscellaneous
         return message;
     }
 
-    public static void writeToFile(String name, String content)
+    public static void writeToFile(FileWriter fileWriter, String content)
     {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(new File("./output/" + name + ".txt")))) {
+        try (BufferedWriter bw = new BufferedWriter(fileWriter)) {
             bw.write(content);
             bw.close();
         }catch (java.io.IOException ex) {
             System.out.println('\n'+ex.toString());
+        }
+
+    }
+
+    public static void readFile(String file){
+        Scanner read;
+        String buf;
+        ArrayList M = new ArrayList();
+        ArrayList I = new ArrayList();
+        try {
+            read = new Scanner(new File(file));
+
+            buf = read.nextLine();
+            while(read.hasNextLine()){
+
+                M.add(read.nextLine());
+                I.add(read.nextLine());
+                /*//System.out.println(buf);
+                //System.out.println(buf.substring(0,5));
+                //System.out.println(buf.substring(6));
+                M.add(String.valueOf(buf.substring(0,5)));
+                I.add(String.valueOf(buf.substring(6)));*/
+
+
+            }
+            for (int i=0; i<M.size(); i++){
+                System.out.println(M.get(i+1) + " "+ I.get(i+1)  + "\n");
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
         }
 
     }

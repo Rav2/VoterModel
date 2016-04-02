@@ -1,5 +1,9 @@
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Random;
+
 
 public class VoterModel {
 	int numberOfSimulationSteps;
@@ -8,11 +12,11 @@ public class VoterModel {
 	int[] states;
 	double magnetization;
 	int interfaces;
-	int numberOfInterfaces;
 	ArrayList<ArrayList<Integer>> adjList;
 	int size;
+	int k;
 
-	public VoterModel(ArrayList<ArrayList<Integer>> list, int simSteps, int realizations, String path){
+	public VoterModel(ArrayList<ArrayList<Integer>> list, int simSteps, int realizations, String path, int kk){
 		numberOfSimulationSteps = simSteps;
 		numberOfRealizations = realizations;
 		size = list.size();
@@ -23,6 +27,7 @@ public class VoterModel {
 		adjList = list;
 		magnetization = 0;
 		interfaces = 0;
+		k = kk;
 	}
 
 	//losuje opinie -1 lub 1
@@ -52,12 +57,19 @@ public class VoterModel {
 		interfaces/=2;
 	}
 
-	void dynamics(ArrayList<ArrayList<Integer>> list){
+	void dynamics(ArrayList<ArrayList<Integer>> list) throws IOException {
 		int randomAgent = 0;
 		int randomNeighbour = 0;
 		int takenOpinion = 0;
 		Random r = new Random();
+		File file = new File("./output/" + "file" + ".txt");
+		FileWriter fileWriter = new FileWriter(file);
+		File fileAveraged = new File("./output/" + "output_k" + Integer.toString(k) + ".txt");
+		FileWriter fileWriterAveraged = new FileWriter(fileAveraged);
+		Miscellaneous.writeToFile(fileWriter, "M\t" + "I \n");
 		for (int k = 0; k < numberOfRealizations; k++){
+			double averageMagnetization = 0;
+			double averageInterfaces = 0;
 			drawStates(size);	//los stanow
 			for (int i = 0; i < numberOfSimulationSteps; i++){
 				for (int j = 0; j < size; j++){
@@ -65,22 +77,28 @@ public class VoterModel {
 					randomAgent = r.nextInt(size);
 					randomNeighbour = list.get(randomAgent).get(r.nextInt(list.get(randomAgent).size()));
 					takenOpinion = states[randomNeighbour];
-					System.out.println("Przed: " + states[randomAgent] + " opinia sasiada" +  " "
+					//Wyswietlanie
+					/*System.out.println("Przed: " + states[randomAgent] + " opinia sasiada" +  " "
 							+ states[randomNeighbour] + " taken opinion: " +
 							takenOpinion + " " + randomNeighbour);
 					states[randomAgent] = takenOpinion;
 					System.out.println("Po: " + states[randomAgent] + " " + randomAgent +
 							" opinia sasiada" +  " " + states[randomNeighbour]
-							+ " " + randomNeighbour);
+							+ " " + randomNeighbour);*/
 				}
 
 				magnetization();
 				interfaces();
 				//zapis do pliku
-				Miscellaneous.writeToFile("test", "BEFORE\n" + Miscellaneous.displayList(size, list, true, states)
-						+ "\nAFTER\n" + Miscellaneous.displayList(size, list, true, states) + "\n\n Magnetization: "
-						+ magnetization + "\nInterfaces: " + interfaces);
+				fileWriter = new FileWriter(file,true);
+				Miscellaneous.writeToFile(fileWriter, Math.round(magnetization * 1000.0) / 1000.0 + " " + interfaces + "\n");
+				averageInterfaces += interfaces;
+				averageMagnetization += magnetization;
 			}
+			averageInterfaces /= numberOfSimulationSteps;
+			averageMagnetization /= numberOfSimulationSteps;
+			fileWriterAveraged = new FileWriter(fileAveraged,true);
+			Miscellaneous.writeToFile(fileWriterAveraged, Math.round(averageMagnetization * 1000.0) / 1000.0 + " " + averageInterfaces + "\n");
 		}
 	}
 

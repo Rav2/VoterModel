@@ -8,13 +8,16 @@ public class Execution {
         try
         {
             //TOPOLOGY
-            Ring r1 = new Ring(30,3, 0.1);
+            int fixedDegree = 4;
+            Ring r1 = new Ring(30,fixedDegree, 0.1);
             ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
             int[] deg = r1.getDegrees();
-            VoterModel model = new VoterModel(r1.adjacencyList , 20, 1, "");
+            VoterModel model = new VoterModel(r1.adjacencyList , 100, 100, "",fixedDegree);
             model.dynamics(r1.adjacencyList);
 
-            String mes1 = Miscellaneous.displayList(r1.getSize(), am, true, model.states);
+            //wyswietlanie
+
+            /*String mes1 = Miscellaneous.displayList(r1.getSize(), am, true, model.states);
             System.out.println(mes1);
             System.out.println("\nDegrees:");
             for (int i = 0; i < r1.getSize(); i++) System.out.printf(" %d", deg[i]);
@@ -38,7 +41,7 @@ public class Execution {
             System.out.printf("\nAverage degree: %.2f", Miscellaneous.average(deg));
 
             //Miscellaneous.writeToFile("\ntest", "BEFORE\n" + mes1 + "\nAFTER\n" + mes2);
-
+*/
         }
         catch (Exception e)
         {
