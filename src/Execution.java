@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 public class Execution {
     int[][] adjacencyMatrixGlobal;
 
@@ -8,12 +7,13 @@ public class Execution {
         try
         {
             //TOPOLOGY
-            int fixedDegree = 4;
-            Ring r1 = new Ring(30,fixedDegree, 0.1);
+            int fixedDegree = 40;
+            Ring r1 = new Ring(100,fixedDegree, 0.7);
             ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
             int[] deg = r1.getDegrees();
-            VoterModel model = new VoterModel(r1.adjacencyList , 100, 100, "",fixedDegree);
+            VoterModel model = new VoterModel(r1.adjacencyList , 10, 10, "",fixedDegree);
             model.dynamics(r1.adjacencyList);
+            System.out.printf("\naverage path length=%.3f",r1.computeAveragePathLength());
 
             //wyswietlanie
 

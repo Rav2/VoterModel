@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Random;
 
 public class Ring
@@ -20,7 +21,7 @@ public class Ring
 		adjacencyList = new ArrayList<ArrayList<Integer>>(size);
 		for (int ii = 0; ii<size; ii++ )adjacencyList.add(new ArrayList<Integer>());
 		degrees = new int[size];
-		filladjacencyList(fixedDegree);
+		fillAdjacencyList(fixedDegree);
 	}
 
 	public Ring(int n, int k) throws Exception// constructor #2
@@ -36,7 +37,7 @@ public class Ring
 		adjacencyList = new ArrayList<ArrayList<Integer>>(size);
 		for (int ii = 0; ii<size; ii++ )adjacencyList.add(new ArrayList<Integer>());
 		degrees = new int[size];
-		filladjacencyList(fixedDegree);
+		fillAdjacencyList(fixedDegree);
 	}
 
 	public Ring(int n, int k, double p) throws Exception// constructor #3
@@ -52,12 +53,12 @@ public class Ring
 		adjacencyList = new ArrayList<ArrayList<Integer>>(size);
 		for (int ii = 0; ii<size; ii++ )adjacencyList.add(new ArrayList<Integer>());
 		degrees = new int[size];
-		filladjacencyList(fixedDegree);
+		fillAdjacencyList(fixedDegree);
 		rewireConnections(probability);
 	}
 
 	// Computing methods
-	public ArrayList<ArrayList<Integer>> filladjacencyList(int k) // create connection between nodes
+	public ArrayList<ArrayList<Integer>> fillAdjacencyList(int k) // create connection between nodes
 	{
 
 		//LISTS ARE ENUMERATED STARTING FROM 0 UP TO SIZE-1
@@ -159,17 +160,67 @@ public class Ring
 		return degreesArray;
 	}*/
 
+	private int computePathDistance(int nod1, int nod2)
+	{
+		int distance=0;
+		if(nod1==nod2)
+			return distance;
+
+		HashSet<Integer> allFound = new HashSet<>(nod1);
+		ArrayList<Integer> currentlyUsed = new ArrayList<>();
+		HashSet<Integer> newOnes = new HashSet<>();
+
+		currentlyUsed.add(nod1);
+		while((!currentlyUsed.contains(nod2)))
+		{
+			allFound.addAll(currentlyUsed);
+			distance++;
+			for(int nod : currentlyUsed)
+			{
+				newOnes.addAll(adjacencyList.get(nod));
+			}
+			newOnes.removeAll(allFound);
+			currentlyUsed=new ArrayList<>(newOnes);
+		}
+
+		return distance;
+	}
+
 	public double computeAveragePathLength()
 	{
+		System.out.println("I compute average path length...");
+		//Uncomment the following part if you want to see how particular distances look
+		/*
+		Integer[][] distanceMatrix = new Integer[size][size];
+		for(int row=0; row<size; row++)
+		{
+			for (int col = row; col < size; col++) {
+				int dist = computePathDistance(row, col);
+				distanceMatrix[row][col] = dist;
+				distanceMatrix[col][row] = dist;
+			}
+		}
+		for(int row=0; row<size; row++)
+		{
+			for (int col = 0; col < size; col++)
+			{
+				System.out.print(String.format("%d ", distanceMatrix[row][col]));
+			}
+			System.out.print('\n');
+		}
+		*/
 		double apl = 0.0;
 
-		for (int i = 0; i < size; i++){
-			for (int j = 0; j < adjacencyList.get(i).size(); j++){
-				apl++;
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = i; j < size; j++)
+			{
+				apl+=computePathDistance(i,j);
 			}
 		}
 
-		apl /= size * (size-1);
+		apl = 2* apl / (size * (size-1));
+
 
 		/*
 		Funkcja, ktĂłra liczy Ĺ›redniÄ… najkrĂłtszÄ… drogÄ™ w sieci.

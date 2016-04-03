@@ -62,11 +62,13 @@ public class VoterModel {
 		int randomNeighbour = 0;
 		int takenOpinion = 0;
 		Random r = new Random();
+
 		File file = new File("./output/" + "file" + ".txt");
 		FileWriter fileWriter = new FileWriter(file);
 		File fileAveraged = new File("./output/" + "output_k" + Integer.toString(k) + ".txt");
 		FileWriter fileWriterAveraged = new FileWriter(fileAveraged);
-		Miscellaneous.writeToFile(fileWriter, "M\t" + "I \n");
+		Miscellaneous.writeToFile(fileWriter, "Magnetization\t" + "Interface\n");
+
 		for (int k = 0; k < numberOfRealizations; k++){
 			double averageMagnetization = 0;
 			double averageInterfaces = 0;
@@ -91,7 +93,7 @@ public class VoterModel {
 				interfaces();
 				//zapis do pliku
 				fileWriter = new FileWriter(file,true);
-				Miscellaneous.writeToFile(fileWriter, Math.round(magnetization * 1000.0) / 1000.0 + " " + interfaces + "\n");
+				Miscellaneous.writeToFile(fileWriter, String.format("%.3f\t\t\t\t%d\n", Math.round(magnetization * 1000.0) / 1000.0,interfaces));
 				averageInterfaces += interfaces;
 				averageMagnetization += magnetization;
 			}
