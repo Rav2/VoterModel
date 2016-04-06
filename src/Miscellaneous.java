@@ -39,33 +39,55 @@ public class Miscellaneous
 
     }
 
-    public static void readFile(String file){
-        Scanner read;
-        String buf;
-        ArrayList M = new ArrayList();
-        ArrayList I = new ArrayList();
+    public static void readFile(String magnFile,String interFile, int size, int deg) throws IOException {
+        Scanner readM;
+        Scanner readI;
+        ArrayList<ArrayList<Double>> M = new ArrayList<ArrayList<Double>>(size);
+        ArrayList<ArrayList<Integer>> I = new ArrayList<ArrayList<Integer>>(size);
         try {
-            read = new Scanner(new File(file));
-
-            buf = read.nextLine();
-            while(read.hasNextLine()){
-
-                M.add(read.nextLine());
-                I.add(read.nextLine());
-                /*//System.out.println(buf);
-                //System.out.println(buf.substring(0,5));
-                //System.out.println(buf.substring(6));
-                M.add(String.valueOf(buf.substring(0,5)));
-                I.add(String.valueOf(buf.substring(6)));*/
-
-
-            }
-            for (int i=0; i<M.size(); i++){
-                System.out.println(M.get(i+1) + " "+ I.get(i+1)  + "\n");
+            readM = new Scanner(new File(magnFile));
+            readI = new Scanner(new File(interFile));
+            int row =0;
+            int col=0;
+            readM.useDelimiter(";");
+            readI.useDelimiter(";");
+            boolean condition = readM.hasNextDouble();
+            while(condition){
+                M.add(new ArrayList<Double>());
+                I.add(new ArrayList<Integer>());
+                while(condition) {
+                    M.get(row).add(col, readM.nextDouble());
+                    I.get(row).add(col, readI.nextInt());
+                    col++;
+                    if (col == (size)) {
+                        col = 0;
+                        row++;
+                        condition = false;
+                    }
+                }
+                readM.nextLine();
+                readI.nextLine();
+                condition = readM.hasNextDouble();
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+
+
+        String bufM = "", bufI="";
+        for(int col=0; col<size; col++) {
+            double sumM=0;
+            double sumI=0;
+            for (int row = 0; row < size; row++) {
+                sumM += M.get(row).get(col);
+                sumI += I.get(row).get(col);
+            }
+            bufM += (String.format("%.3f",(sumM / size)) + ";\n");
+            bufI += (String.format("%d",(int)(sumI / size)) + ";\n");
+        }
+        writeToFile(new FileWriter(new File("./output/MAv" + deg + ".txt")), bufM);
+        writeToFile(new FileWriter(new File("./output/IAv" + deg + ".txt")), bufI);
+       // System.out.println(bufM + " \n" + bufI);
 
     }
 

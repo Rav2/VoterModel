@@ -7,14 +7,17 @@ public class Execution {
         try
         {
             //TOPOLOGY
-            int fixedDegree = 40;
-            Ring r1 = new Ring(100,fixedDegree, 0.7);
+            int fixedDegree = 2;
+            int simSteps = 100;
+            Ring r1 = new Ring(1000,fixedDegree, 0.0);
             ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
             int[] deg = r1.getDegrees();
-            VoterModel model = new VoterModel(r1.adjacencyList , 10, 10, "",fixedDegree);
+            VoterModel model = new VoterModel(r1.adjacencyList , simSteps, simSteps, "",fixedDegree);
             model.dynamics(r1.adjacencyList);
             System.out.printf("\naverage path length=%.3f",r1.computeAveragePathLength());
 
+
+            Miscellaneous.readFile("./output/M" + fixedDegree + ".txt","./output/I" + fixedDegree + ".txt",simSteps, fixedDegree);
             //wyswietlanie
 
             /*String mes1 = Miscellaneous.displayList(r1.getSize(), am, true, model.states);

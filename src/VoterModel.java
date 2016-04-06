@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 
 
@@ -32,7 +33,7 @@ public class VoterModel {
 
 	//losuje opinie -1 lub 1
 	void drawStates(int length){
-		Random r = new Random();
+		Random r = new Random(new Date().getTime());
 		for (int i = 0; i < length; i++) {
 			states[i]= 2 * r.nextInt(2) - 1;
 		}
@@ -61,17 +62,16 @@ public class VoterModel {
 		int randomAgent = 0;
 		int randomNeighbour = 0;
 		int takenOpinion = 0;
-		Random r = new Random();
+		Random r = new Random(new Date().getTime());
 
-		File file = new File("./output/" + "file" + ".txt");
-		FileWriter fileWriter = new FileWriter(file);
-		File fileAveraged = new File("./output/" + "output_k" + Integer.toString(k) + ".txt");
-		FileWriter fileWriterAveraged = new FileWriter(fileAveraged);
-		Miscellaneous.writeToFile(fileWriter, "Magnetization\t" + "Interface\n");
+		File magnetizationFile = new File("./output/" + "M" + Integer.toString(k) + ".txt");
+		FileWriter magnetizationFileWriter;
+		File interfacesFile = new File("./output/" + "I" + Integer.toString(k) + ".txt");
+		FileWriter interfacesFileWriter;
+		magnetizationFileWriter = new FileWriter(magnetizationFile);
+		interfacesFileWriter = new FileWriter(interfacesFile);
 
 		for (int k = 0; k < numberOfRealizations; k++){
-			double averageMagnetization = 0;
-			double averageInterfaces = 0;
 			drawStates(size);	//los stanow
 			for (int i = 0; i < numberOfSimulationSteps; i++){
 				for (int j = 0; j < size; j++){
@@ -79,11 +79,12 @@ public class VoterModel {
 					randomAgent = r.nextInt(size);
 					randomNeighbour = list.get(randomAgent).get(r.nextInt(list.get(randomAgent).size()));
 					takenOpinion = states[randomNeighbour];
+					states[randomAgent] = takenOpinion;
 					//Wyswietlanie
 					/*System.out.println("Przed: " + states[randomAgent] + " opinia sasiada" +  " "
 							+ states[randomNeighbour] + " taken opinion: " +
 							takenOpinion + " " + randomNeighbour);
-					states[randomAgent] = takenOpinion;
+
 					System.out.println("Po: " + states[randomAgent] + " " + randomAgent +
 							" opinia sasiada" +  " " + states[randomNeighbour]
 							+ " " + randomNeighbour);*/
@@ -92,15 +93,16 @@ public class VoterModel {
 				magnetization();
 				interfaces();
 				//zapis do pliku
-				fileWriter = new FileWriter(file,true);
-				Miscellaneous.writeToFile(fileWriter, String.format("%.3f\t\t\t\t%d\n", Math.round(magnetization * 1000.0) / 1000.0,interfaces));
-				averageInterfaces += interfaces;
-				averageMagnetization += magnetization;
+				magnetizationFileWriter = new FileWriter(magnetizationFile,true);
+				interfacesFileWriter = new FileWriter(interfacesFile,true);
+				Miscellaneous.writeToFile(magnetizationFileWriter, String.format("%.2f;", Math.round(Math.abs(magnetization) * 100.0) / 100.0));
+				Miscellaneous.writeToFile(interfacesFileWriter,  Integer.toString(interfaces) + ";" );
 			}
-			averageInterfaces /= numberOfSimulationSteps;
-			averageMagnetization /= numberOfSimulationSteps;
-			fileWriterAveraged = new FileWriter(fileAveraged,true);
-			Miscellaneous.writeToFile(fileWriterAveraged, Math.round(averageMagnetization * 1000.0) / 1000.0 + " " + averageInterfaces + "\n");
+			magnetizationFileWriter = new FileWriter(magnetizationFile,true);
+			interfacesFileWriter = new FileWriter(interfacesFile,true);
+			Miscellaneous.writeToFile(magnetizationFileWriter, "\n");
+			Miscellaneous.writeToFile(interfacesFileWriter,  "\n");
+
 		}
 	}
 
