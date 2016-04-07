@@ -60,7 +60,7 @@ public class VoterModel {
 		interfaces/=2;
 	}
 
-	void dynamics(ArrayList<ArrayList<Integer>> list) throws IOException {
+	void dynamics(ArrayList<ArrayList<Integer>> topologyList) throws IOException {
 		int randomAgent = 0;
 		int randomNeighbour = 0;
 		int takenOpinion = 0;
@@ -78,11 +78,15 @@ public class VoterModel {
 			for (int i = 0; i < numberOfSimulationSteps; i++){
 				for (int j = 0; j < size; j++){
 					//przejmowanie opinii
-					randomAgent = r.nextInt(size);
-
-					int losuj = r.nextInt(list.get(randomAgent).size());
-					if(losuj < 0) System.out.println(losuj);
-					randomNeighbour = list.get(randomAgent).get(losuj);
+					do
+					{
+						randomAgent = r.nextInt(size);
+						//System.out.printf("\nIn while!\n");
+					}
+					while(topologyList.get(randomAgent).size()==0);
+					int randNeighbourIndex = r.nextInt(topologyList.get(randomAgent).size());
+					if(randNeighbourIndex < 0) System.out.println(randNeighbourIndex);
+					randomNeighbour = topologyList.get(randomAgent).get(randNeighbourIndex);
 					takenOpinion = states[randomNeighbour];
 					states[randomAgent] = takenOpinion;
 					//Wyswietlanie

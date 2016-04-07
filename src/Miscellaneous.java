@@ -91,16 +91,16 @@ public class Miscellaneous
 
     }
 
-//    public static String handleExceptions(Exception e)
-//    {
-//        String mes = new String("\nException catched!\n");
-//        String localizedMessage = "Localized Message:\n" + e.getLocalizedMessage() +"\n";
-//        String message = "Message:\n" + e.getMessage() + "\n";
-//        String cause = "Cause\n" + e.getCause() + "\n";
-//        String stackTrace = "StackTrace:\n" + e.getStackTrace() + "\n";
-//        String _class = "Class:\n"+e.getClass()+"\n";
-//        String suppressed= "Suppressed:\n" + e.getSuppressed() + "\n";
-//        mes =  message + cause + stackTrace + localizedMessage + _class + suppressed;
-//        return mes;
-//    }
+    public static String handleExceptions(Exception e)
+    {
+        String mes = new String("\nException catched!\n");
+        String localizedMessage = "Localized Message:\n" + e.getLocalizedMessage() +"\n";
+        String message = "Message:\n" + e.getMessage() + "\n";
+        String cause = "Cause\n" + e.getCause() + "\n";
+        String stackTrace = "StackTrace:\n" + e.getStackTrace() + "\n";
+        String _class = "Class:\n"+e.getClass()+"\n";
+        String suppressed= "Suppressed:\n" + e.getSuppressed() + "\n";
+        mes =  message + cause + stackTrace + localizedMessage + _class + suppressed;
+        return mes;
+   }
 }

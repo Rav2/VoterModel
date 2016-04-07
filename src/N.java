@@ -5,11 +5,11 @@ public class N {
     public static void main(String[] args)
     {
 
-        for (double i = 0.0; i<0.4; i+= 0.02){
+        for (double probabilty = 0.0; probabilty<1.0; probabilty+= 0.02){
            // System.out.println(String.format("%.2f",i));
-            Execution e = new Execution(i);
+            Execution e = new Execution(probabilty);
         }
-
+        System.out.println("END OF WORK");
 
     }
 }

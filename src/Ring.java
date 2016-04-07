@@ -188,7 +188,7 @@ public class Ring
 
 	public double computeAveragePathLength()
 	{
-		System.out.println("I compute average path length...");
+		System.out.println("I compute average path length...\n");
 		//Uncomment the following part if you want to see how particular distances look
 		/*
 		Integer[][] distanceMatrix = new Integer[size][size];
