@@ -9,14 +9,15 @@ public class Execution {
             //TOPOLOGY
             int fixedDegree = 2;
             int simSteps = 10;
-            System.out.printf("Starting a new Execution with p=%f, k=%d, simSteps=%d\n", p, fixedDegree, simSteps);
+            int size = 30;
+            System.out.printf("\nStarting a new Execution with p=%f, k=%d, size=%d, simSteps=%d\n", p, fixedDegree, size, simSteps);
 
-            Ring r1 = new Ring(10, fixedDegree, probab);
+            Ring r1 = new Ring(size, fixedDegree, probab);
             ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
             int[] deg = r1.getDegrees();
             VoterModel model = new VoterModel(r1.adjacencyList, simSteps, simSteps, "", fixedDegree, probab);
             model.dynamics(r1.adjacencyList);
-           // System.out.printf("average path length=%.3f\n", r1.computeAveragePathLength());
+            System.out.printf("average path length=%.3f\n", r1.computeAveragePathLength());
 
 
             Miscellaneous.readFile("./output/M_k" + fixedDegree + "_p" + String.format("%.2f", probab).substring(2, 4) + ".txt", "./output/I_k" + fixedDegree + "_p" + String.format("%.2f", probab).substring(2, 4) + ".txt", simSteps, fixedDegree, probab);

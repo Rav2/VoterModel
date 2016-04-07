@@ -11,7 +11,7 @@ public class Ring
 	double probability;
 	ArrayList<ArrayList<Integer>> adjacencyList;
 	int[] degrees;
-
+	boolean inconsistent = false;
 	// Constructors
 	public Ring(int n) // constructor #1
 	{
@@ -175,6 +175,13 @@ public class Ring
 		{
 			allFound.addAll(currentlyUsed);
 			distance++;
+			if(distance > size)
+			{
+				//Reaching this part means that the given pair of vertices does not have any path between them.
+				inconsistent = true;
+				return 0;
+			}
+
 			for(int nod : currentlyUsed)
 			{
 				newOnes.addAll(adjacencyList.get(nod));
@@ -188,7 +195,7 @@ public class Ring
 
 	public double computeAveragePathLength()
 	{
-		System.out.println("I compute average path length...\n");
+		System.out.printf("I compute average path length...\n");
 		//Uncomment the following part if you want to see how particular distances look
 		/*
 		Integer[][] distanceMatrix = new Integer[size][size];
@@ -209,6 +216,7 @@ public class Ring
 			System.out.print('\n');
 		}
 		*/
+		inconsistent = false;
 		double apl = 0.0;
 
 		for (int i = 0; i < size; i++)
@@ -218,7 +226,10 @@ public class Ring
 				apl+=computePathDistance(i,j);
 			}
 		}
-
+		if(inconsistent)
+		{
+			System.out.print("!!!The graph is not consistent!\n");
+		}
 		apl = 2* apl / (size * (size-1));
 
 
