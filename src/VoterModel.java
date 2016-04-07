@@ -16,8 +16,9 @@ public class VoterModel {
 	ArrayList<ArrayList<Integer>> adjList;
 	int size;
 	int k;
+	double p;
 
-	public VoterModel(ArrayList<ArrayList<Integer>> list, int simSteps, int realizations, String path, int kk){
+	public VoterModel(ArrayList<ArrayList<Integer>> list, int simSteps, int realizations, String path, int kk, double pp){
 		numberOfSimulationSteps = simSteps;
 		numberOfRealizations = realizations;
 		size = list.size();
@@ -29,6 +30,7 @@ public class VoterModel {
 		magnetization = 0;
 		interfaces = 0;
 		k = kk;
+		p = pp;
 	}
 
 	//losuje opinie -1 lub 1
@@ -64,9 +66,9 @@ public class VoterModel {
 		int takenOpinion = 0;
 		Random r = new Random(new Date().getTime());
 
-		File magnetizationFile = new File("./output/" + "M" + Integer.toString(k) + ".txt");
+		File magnetizationFile = new File("./output/" + "M_k" + k+ "_p"+ String.format("%.2f",p).substring(2,4)+ ".txt");
 		FileWriter magnetizationFileWriter;
-		File interfacesFile = new File("./output/" + "I" + Integer.toString(k) + ".txt");
+		File interfacesFile = new File("./output/" + "I_k" + k +  "_p"+ String.format("%.2f",p).substring(2,4) + ".txt");
 		FileWriter interfacesFileWriter;
 		magnetizationFileWriter = new FileWriter(magnetizationFile);
 		interfacesFileWriter = new FileWriter(interfacesFile);
@@ -77,7 +79,10 @@ public class VoterModel {
 				for (int j = 0; j < size; j++){
 					//przejmowanie opinii
 					randomAgent = r.nextInt(size);
-					randomNeighbour = list.get(randomAgent).get(r.nextInt(list.get(randomAgent).size()));
+
+					int losuj = r.nextInt(list.get(randomAgent).size());
+					if(losuj < 0) System.out.println(losuj);
+					randomNeighbour = list.get(randomAgent).get(losuj);
 					takenOpinion = states[randomNeighbour];
 					states[randomAgent] = takenOpinion;
 					//Wyswietlanie

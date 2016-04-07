@@ -39,7 +39,7 @@ public class Miscellaneous
 
     }
 
-    public static void readFile(String magnFile,String interFile, int size, int deg) throws IOException {
+    public static void readFile(String magnFile,String interFile, int size, int deg, double p) throws IOException {
         Scanner readM;
         Scanner readI;
         ArrayList<ArrayList<Double>> M = new ArrayList<ArrayList<Double>>(size);
@@ -85,8 +85,8 @@ public class Miscellaneous
             bufM += (String.format("%.3f",(sumM / size)) + ";\n");
             bufI += (String.format("%d",(int)(sumI / size)) + ";\n");
         }
-        writeToFile(new FileWriter(new File("./output/MAv" + deg + ".txt")), bufM);
-        writeToFile(new FileWriter(new File("./output/IAv" + deg + ".txt")), bufI);
+        writeToFile(new FileWriter(new File("./output/MAv_k" + deg+ "_p"+ String.format("%.2f",p).substring(2,4) + ".txt")), bufM);
+        writeToFile(new FileWriter(new File("./output/IAv_k" + deg+ "_p"+ String.format("%.2f",p).substring(2,4) + ".txt")), bufI);
        // System.out.println(bufM + " \n" + bufI);
 
     }

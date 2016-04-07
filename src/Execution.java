@@ -1,23 +1,24 @@
 import java.util.ArrayList;
 public class Execution {
-    int[][] adjacencyMatrixGlobal;
+    double probab = 0.00;
+    Execution( double p) {
+        probab = p;
 
-    public static void main(String[] args)
-    {
-        try
-        {
+
+        try {
             //TOPOLOGY
             int fixedDegree = 2;
-            int simSteps = 100;
-            Ring r1 = new Ring(1000,fixedDegree, 0.0);
+            int simSteps = 10;
+
+            Ring r1 = new Ring(10, fixedDegree, probab);
             ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
             int[] deg = r1.getDegrees();
-            VoterModel model = new VoterModel(r1.adjacencyList , simSteps, simSteps, "",fixedDegree);
+            VoterModel model = new VoterModel(r1.adjacencyList, simSteps, simSteps, "", fixedDegree, probab);
             model.dynamics(r1.adjacencyList);
-            System.out.printf("\naverage path length=%.3f",r1.computeAveragePathLength());
+            System.out.printf("\naverage path length=%.3f", r1.computeAveragePathLength());
 
 
-            Miscellaneous.readFile("./output/M" + fixedDegree + ".txt","./output/I" + fixedDegree + ".txt",simSteps, fixedDegree);
+            Miscellaneous.readFile("./output/M_k" + fixedDegree + "_p" + String.format("%.2f",probab).substring(2,4) + ".txt", "./output/I_k" + fixedDegree + "_p" + String.format("%.2f",probab).substring(2,4) + ".txt", simSteps, fixedDegree, probab);
             //wyswietlanie
 
             /*String mes1 = Miscellaneous.displayList(r1.getSize(), am, true, model.states);
@@ -45,14 +46,11 @@ public class Execution {
 
             //Miscellaneous.writeToFile("\ntest", "BEFORE\n" + mes1 + "\nAFTER\n" + mes2);
 */
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             System.out.print("\n");
             e.printStackTrace();
         }
 
 
     }
-
 }
