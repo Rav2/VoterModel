@@ -1,26 +1,24 @@
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 public class Execution {
-    double probab = 0.00;
-    Execution( double p) {
-        probab = p;
-
-
+    Execution( int fixedDegree, double probab, int simSteps, int size, File aplFile, FileWriter aplWriter) {
         try {
             //TOPOLOGY
-            int fixedDegree = 2;
-            int simSteps = 10;
-            int size = 30;
-            System.out.printf("\nStarting a new Execution with p=%f, k=%d, size=%d, simSteps=%d\n", p, fixedDegree, size, simSteps);
+            System.out.printf("\nStarting a new Execution with k=%d, p=%f, simSteps=%d, size=%d\n", fixedDegree, probab,  simSteps, size);
 
             Ring r1 = new Ring(size, fixedDegree, probab);
             ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
             int[] deg = r1.getDegrees();
-            VoterModel model = new VoterModel(r1.adjacencyList, simSteps, simSteps, "", fixedDegree, probab);
+            VoterModel model = new VoterModel(r1.adjacencyList, fixedDegree, probab, simSteps, simSteps);
             model.dynamics(r1.adjacencyList);
-            System.out.printf("average path length=%.3f\n", r1.computeAveragePathLength());
+            double apl = r1.computeAveragePathLength();
+            System.out.printf("average path length=%.3f\n", apl);
+            Miscellaneous.readFile(Miscellaneous.makeFileName("M", false, fixedDegree, probab, simSteps, size),
+                    Miscellaneous.makeFileName("I", false, fixedDegree, probab, simSteps, size), fixedDegree, probab, simSteps, size);
+            aplWriter = new FileWriter(aplFile, true);
+            Miscellaneous.writeToFile(aplWriter, String.format("%.3f;\n",apl));
 
-
-            Miscellaneous.readFile("./output/M_k" + fixedDegree + "_p" + String.format("%.2f", probab).substring(2, 4) + ".txt", "./output/I_k" + fixedDegree + "_p" + String.format("%.2f", probab).substring(2, 4) + ".txt", simSteps, fixedDegree, probab);
             //wyswietlanie
 
             /*String mes1 = Miscellaneous.displayList(r1.getSize(), am, true, model.states);

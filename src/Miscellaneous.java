@@ -39,7 +39,14 @@ public class Miscellaneous
 
     }
 
-    public static void readFile(String magnFile,String interFile, int size, int deg, double p) throws IOException {
+    public static String makeFileName(String type, boolean averaged, int k, double p, int steps, int size){
+        if (averaged) type += "Av";
+        //size = N - ilosc agentow - rozmiar sieci
+        String name = "./output/" + type + "_k" + k + "_p"+ String.format("%.2f",p).substring(2,4) + "_steps" + steps + "_N" + size + ".txt";
+        return name;
+    }
+
+    public static void readFile(String magnFile, String interFile,  int k, double p, int simSteps, int size) throws IOException {
         Scanner readM;
         Scanner readI;
         ArrayList<ArrayList<Double>> M = new ArrayList<ArrayList<Double>>(size);
@@ -59,7 +66,7 @@ public class Miscellaneous
                     M.get(row).add(col, readM.nextDouble());
                     I.get(row).add(col, readI.nextInt());
                     col++;
-                    if (col == (size)) {
+                    if (col == (simSteps)) {
                         col = 0;
                         row++;
                         condition = false;
@@ -75,18 +82,18 @@ public class Miscellaneous
 
 
         String bufM = "", bufI="";
-        for(int col=0; col<size; col++) {
+        for(int col=0; col<simSteps; col++) {
             double sumM=0;
             double sumI=0;
-            for (int row = 0; row < size; row++) {
+            for (int row = 0; row < simSteps; row++) {
                 sumM += M.get(row).get(col);
                 sumI += I.get(row).get(col);
             }
-            bufM += (String.format("%.3f",(sumM / size)) + ";\n");
-            bufI += (String.format("%d",(int)(sumI / size)) + ";\n");
+            bufM += (String.format("%.3f",(sumM / simSteps)) + ";\n");
+            bufI += (String.format("%d",(int)(sumI / simSteps)) + ";\n");
         }
-        writeToFile(new FileWriter(new File("./output/MAv_k" + deg+ "_p"+ String.format("%.2f",p).substring(2,4) + ".txt")), bufM);
-        writeToFile(new FileWriter(new File("./output/IAv_k" + deg+ "_p"+ String.format("%.2f",p).substring(2,4) + ".txt")), bufI);
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("M", true, k, p, simSteps, size))), bufM);
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("I", true, k, p, simSteps, size))), bufI);
        // System.out.println(bufM + " \n" + bufI);
 
     }

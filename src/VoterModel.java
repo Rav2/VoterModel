@@ -7,9 +7,7 @@ import java.util.Random;
 
 
 public class VoterModel {
-	int numberOfSimulationSteps;
 	int numberOfRealizations;
-	String filePath;
 	int[] states;
 	double magnetization;
 	int interfaces;
@@ -17,12 +15,12 @@ public class VoterModel {
 	int size;
 	int k;
 	double p;
+	int simSteps;
 
-	public VoterModel(ArrayList<ArrayList<Integer>> list, int simSteps, int realizations, String path, int kk, double pp){
-		numberOfSimulationSteps = simSteps;
+	public VoterModel(ArrayList<ArrayList<Integer>> list,int kk, double pp, int steps, int realizations){
+		simSteps = steps;
 		numberOfRealizations = realizations;
 		size = list.size();
-		filePath = path;
 		states = new int[size];
 		drawStates(size);
 		adjList = new ArrayList<ArrayList<Integer>>(size);
@@ -66,16 +64,16 @@ public class VoterModel {
 		int takenOpinion = 0;
 		Random r = new Random(new Date().getTime());
 
-		File magnetizationFile = new File("./output/" + "M_k" + k+ "_p"+ String.format("%.2f",p).substring(2,4)+ ".txt");
+		File magnetizationFile = new File(Miscellaneous.makeFileName("M", false, k, p, simSteps, size));
 		FileWriter magnetizationFileWriter;
-		File interfacesFile = new File("./output/" + "I_k" + k +  "_p"+ String.format("%.2f",p).substring(2,4) + ".txt");
+		File interfacesFile = new File(Miscellaneous.makeFileName("I", false, k, p, simSteps, size));
 		FileWriter interfacesFileWriter;
 		magnetizationFileWriter = new FileWriter(magnetizationFile);
 		interfacesFileWriter = new FileWriter(interfacesFile);
 
 		for (int k = 0; k < numberOfRealizations; k++){
 			drawStates(size);	//los stanow
-			for (int i = 0; i < numberOfSimulationSteps; i++){
+			for (int i = 0; i < simSteps; i++){
 				for (int j = 0; j < size; j++){
 					//przejmowanie opinii
 					do

@@ -1,3 +1,5 @@
+import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -193,8 +195,7 @@ public class Ring
 		return distance;
 	}
 
-	public double computeAveragePathLength()
-	{
+	public double computeAveragePathLength() throws IOException {
 		System.out.printf("I compute average path length...\n");
 		//Uncomment the following part if you want to see how particular distances look
 		/*
@@ -238,6 +239,7 @@ public class Ring
 		https://en.wikipedia.org/wiki/Average_path_length
 		W sieci nieskierowanej d(i,j) = d(j,i) zatem we wzorze pojawia siÄ™ liczba 2 w liczniku zamiast 1.
 		*/
+
 		return apl;
 	}
 
