@@ -2,7 +2,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 public class Execution {
-    Execution( int fixedDegree, double probab, int simSteps, int size, File aplFile, FileWriter aplWriter) {
+    Execution( int fixedDegree, double probab, int simSteps, int realizations, int size, File aplFile, FileWriter aplWriter) {
         try {
             //TOPOLOGY
             System.out.printf("\nStarting a new Execution with k=%d, p=%f, simSteps=%d, size=%d\n", fixedDegree, probab,  simSteps, size);
@@ -10,7 +10,7 @@ public class Execution {
             Ring r1 = new Ring(size, fixedDegree, probab);
             ArrayList<ArrayList<Integer>> am = r1.sortList(r1.getadjacencyList());
             int[] deg = r1.getDegrees();
-            VoterModel model = new VoterModel(r1.adjacencyList, fixedDegree, probab, simSteps, simSteps);
+            VoterModel model = new VoterModel(r1.adjacencyList, fixedDegree, probab, simSteps, realizations);
             model.dynamics(r1.adjacencyList);
             double apl = r1.computeAveragePathLength();
             System.out.printf("average path length=%.3f\n", apl);
