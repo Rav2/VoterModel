@@ -39,14 +39,15 @@ public class Miscellaneous
 
     }
 
-    public static String makeFileName(String type, boolean averaged, int k, double p, int steps, int size){
+    public static String makeFileName(String type, boolean averaged, int k, double p, int steps, int realizations, int size){
         if (averaged) type += "Av";
         //size = N - ilosc agentow - rozmiar sieci
-        String name = "./output/" + type + "_k" + k + "_p"+ String.format("%.2f",p).substring(2,4) + "_steps" + steps + "_N" + size + ".txt";
+        String name = "./output/" + type + "_k" + k + "_p"+ String.format("%.2f",p).substring(2,4)
+                + "_steps" + steps + "_real" + realizations + "_N" + size + ".txt";
         return name;
     }
 
-    public static void readFile(String magnFile, String interFile,  int k, double p, int simSteps, int size) throws IOException {
+ /*   public static void readFile(String magnFile, String interFile,  int k, double p, int simSteps, int size, int realizations) throws IOException {
         Scanner readM;
         Scanner readI;
         ArrayList<ArrayList<Double>> M = new ArrayList<ArrayList<Double>>(size);
@@ -79,23 +80,38 @@ public class Miscellaneous
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+        String bufM = "", bufI="";
+        for(int col=0; col<simSteps; col++) {
+            double sumM=0;
+            double sumI=0;
+            for (int row = 0; row < realizations; row++) {
+                sumM += M.get(row).get(col);
+                sumI += I.get(row).get(col);
+            }
+            bufM += (String.format("%.3f",(sumM / realizations)) + ";\n");
+            bufI += (String.format("%d",(int)(sumI / realizations)) + ";\n");
+        }
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("MM", true, k, p, simSteps, size))), bufM);
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("II", true, k, p, simSteps, size))), bufI);
+    }*/
 
+    public static void averageParametersToFile(int k, double p, int simSteps, int size, int realizations, ArrayList<ArrayList<Double>> M, ArrayList<ArrayList<Integer>> I) throws IOException {
+        //zapisywanie do pliku usrednionych parametrow
 
         String bufM = "", bufI="";
         for(int col=0; col<simSteps; col++) {
             double sumM=0;
             double sumI=0;
-            for (int row = 0; row < simSteps; row++) {
+            for (int row = 0; row < realizations; row++) {
                 sumM += M.get(row).get(col);
                 sumI += I.get(row).get(col);
             }
-            bufM += (String.format("%.3f",(sumM / simSteps)) + ";\n");
-            bufI += (String.format("%d",(int)(sumI / simSteps)) + ";\n");
+            bufM += (String.format("%.3f",(sumM / realizations)) + ";\n");
+            bufI += (String.format("%d",(int)(sumI / realizations)) + ";\n");
         }
-        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("M", true, k, p, simSteps, size))), bufM);
-        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("I", true, k, p, simSteps, size))), bufI);
-       // System.out.println(bufM + " \n" + bufI);
-
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("M", true, k, p, simSteps, realizations, size))), bufM);
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("I", true, k, p, simSteps, realizations, size))), bufI);
+        // System.out.println(bufM + " \n" + bufI);
     }
 
     public static String handleExceptions(Exception e)

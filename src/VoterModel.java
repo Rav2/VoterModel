@@ -16,6 +16,8 @@ public class VoterModel {
 	int k;
 	double p;
 	int simSteps;
+	ArrayList<ArrayList<Double>> M = new ArrayList<ArrayList<Double>>(size);
+	ArrayList<ArrayList<Integer>> I = new ArrayList<ArrayList<Integer>>(size);
 
 	public VoterModel(ArrayList<ArrayList<Integer>> list,int kk, double pp, int steps, int realizations){
 		simSteps = steps;
@@ -64,15 +66,17 @@ public class VoterModel {
 		int takenOpinion = 0;
 		Random r = new Random(new Date().getTime());
 
-		File magnetizationFile = new File(Miscellaneous.makeFileName("M", false, k, p, simSteps, size));
+		File magnetizationFile = new File(Miscellaneous.makeFileName("M", false, k, p, simSteps, numberOfRealizations, size));
 		FileWriter magnetizationFileWriter;
-		File interfacesFile = new File(Miscellaneous.makeFileName("I", false, k, p, simSteps, size));
+		File interfacesFile = new File(Miscellaneous.makeFileName("I", false, k, p, simSteps, numberOfRealizations, size));
 		FileWriter interfacesFileWriter;
 		magnetizationFileWriter = new FileWriter(magnetizationFile);
 		interfacesFileWriter = new FileWriter(interfacesFile);
 
 		for (int k = 0; k < numberOfRealizations; k++){
 			drawStates(size);	//los stanow
+			M.add(new ArrayList<Double>());
+			I.add(new ArrayList<Integer>());
 			for (int i = 0; i < simSteps; i++){
 				for (int j = 0; j < size; j++){
 					//przejmowanie opinii
@@ -104,6 +108,12 @@ public class VoterModel {
 				interfacesFileWriter = new FileWriter(interfacesFile,true);
 				Miscellaneous.writeToFile(magnetizationFileWriter, String.format("%.2f;", Math.round(Math.abs(magnetization) * 100.0) / 100.0));
 				Miscellaneous.writeToFile(interfacesFileWriter,  Integer.toString(interfaces) + ";" );
+
+
+				M.get(k).add(Math.round(Math.abs(magnetization) * 100.0) / 100.0);
+				I.get(k).add(interfaces);
+
+
 			}
 			magnetizationFileWriter = new FileWriter(magnetizationFile,true);
 			interfacesFileWriter = new FileWriter(interfacesFile,true);
@@ -111,6 +121,9 @@ public class VoterModel {
 			Miscellaneous.writeToFile(interfacesFileWriter,  "\n");
 
 		}
+
+
+		Miscellaneous.averageParametersToFile(k, p, simSteps, size, numberOfRealizations, M, I);
 	}
 
 

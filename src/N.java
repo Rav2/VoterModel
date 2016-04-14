@@ -13,13 +13,15 @@ public class N {
         start = currentTimeMillis();
         for (int deg = 2; deg <= 6; deg++) {
             int fixedDegree = deg;
-            int simulationSteps = 1000;
-            int realizations = 100;
-            int size = 1000;
-            File aplFile = new File("./output/" + "apl" + "_k" + fixedDegree + "_steps" + simulationSteps + "_N" + size + ".txt");
+            int simulationSteps = 5;
+            int realizations = 10;
+            int size = 100;
+            File aplFile = new File("./output/" + "apl" + "_k" + fixedDegree + "_steps" + simulationSteps
+                    + "_real" + realizations + "_N" + size + ".txt");
             FileWriter aplWriter = new FileWriter(aplFile);
-            for (double probabilty = 0.0; probabilty < 1; probabilty += 0.05) {
-                Execution e = new Execution(fixedDegree, probabilty, simulationSteps, realizations, size, aplFile, aplWriter);
+            //double probability = 0.0;
+            for (double probability = 0.0; probability < 1; probability += 0.05) {
+                new Execution(fixedDegree, probability, simulationSteps, realizations, size, aplFile, aplWriter);
             }
         }
         koniec = currentTimeMillis();

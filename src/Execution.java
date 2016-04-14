@@ -14,8 +14,10 @@ public class Execution {
             model.dynamics(r1.adjacencyList);
             double apl = r1.computeAveragePathLength();
             System.out.printf("average path length=%.3f\n", apl);
-            Miscellaneous.readFile(Miscellaneous.makeFileName("M", false, fixedDegree, probab, simSteps, size),
-                    Miscellaneous.makeFileName("I", false, fixedDegree, probab, simSteps, size), fixedDegree, probab, simSteps, size);
+           //Miscellaneous.readFile(Miscellaneous.makeFileName("M", false, fixedDegree, probab, simSteps, size),
+             //       Miscellaneous.makeFileName("I", false, fixedDegree, probab, simSteps, size), fixedDegree, probab, simSteps, size, realizations);
+
+
             aplWriter = new FileWriter(aplFile, true);
             Miscellaneous.writeToFile(aplWriter, String.format("%.3f;\n",apl));
 
