@@ -4,9 +4,6 @@ import java.io.IOException;
 
 import static java.lang.System.currentTimeMillis;
 
-/**
- * Created by Kasia on 07.04.16.
- */
 public class N {
     public static void main(String[] args) throws IOException {
         long start, koniec;

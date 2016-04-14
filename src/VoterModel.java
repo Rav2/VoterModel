@@ -109,10 +109,9 @@ public class VoterModel {
 				Miscellaneous.writeToFile(magnetizationFileWriter, String.format("%.2f;", Math.round(Math.abs(magnetization) * 100.0) / 100.0));
 				Miscellaneous.writeToFile(interfacesFileWriter,  Integer.toString(interfaces) + ";" );
 
-
+				//uzupełnianie tablic do usrednienia
 				M.get(k).add(Math.round(Math.abs(magnetization) * 100.0) / 100.0);
 				I.get(k).add(interfaces);
-
 
 			}
 			magnetizationFileWriter = new FileWriter(magnetizationFile,true);

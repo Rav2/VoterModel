@@ -47,7 +47,40 @@ public class Miscellaneous
         return name;
     }
 
- /*   public static void readFile(String magnFile, String interFile,  int k, double p, int simSteps, int size, int realizations) throws IOException {
+
+
+    public static void averageParametersToFile(int k, double p, int simSteps, int size, int realizations, ArrayList<ArrayList<Double>> M, ArrayList<ArrayList<Integer>> I) throws IOException {
+        //zapisywanie do pliku usrednionych parametrow
+
+        String bufM = "", bufI="";
+        for(int col=0; col<simSteps; col++) {
+            double sumM=0;
+            double sumI=0;
+            for (int row = 0; row < realizations; row++) {
+                sumM += M.get(row).get(col);
+                sumI += I.get(row).get(col);
+            }
+            bufM += (String.format("%.3f",(sumM / realizations)) + ";\n");
+            bufI += (String.format("%d",(int)(sumI / realizations)) + ";\n");
+        }
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("M", true, k, p, simSteps, realizations, size))), bufM);
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("I", true, k, p, simSteps, realizations, size))), bufI);
+        // System.out.println(bufM + " \n" + bufI);
+    }
+
+    public static String handleExceptions(Exception e)
+    {
+        String mes = new String("\nException catched!\n");
+        String localizedMessage = "Localized Message:\n" + e.getLocalizedMessage() +"\n";
+        String message = "Message:\n" + e.getMessage() + "\n";
+        String cause = "Cause\n" + e.getCause() + "\n";
+        String stackTrace = "StackTrace:\n" + e.getStackTrace() + "\n";
+        String _class = "Class:\n"+e.getClass()+"\n";
+        String suppressed= "Suppressed:\n" + e.getSuppressed() + "\n";
+        mes =  message + cause + stackTrace + localizedMessage + _class + suppressed;
+        return mes;
+   }
+    /*   public static void readFile(String magnFile, String interFile,  int k, double p, int simSteps, int size, int realizations) throws IOException {
         Scanner readM;
         Scanner readI;
         ArrayList<ArrayList<Double>> M = new ArrayList<ArrayList<Double>>(size);
@@ -94,36 +127,5 @@ public class Miscellaneous
         writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("MM", true, k, p, simSteps, size))), bufM);
         writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("II", true, k, p, simSteps, size))), bufI);
     }*/
-
-    public static void averageParametersToFile(int k, double p, int simSteps, int size, int realizations, ArrayList<ArrayList<Double>> M, ArrayList<ArrayList<Integer>> I) throws IOException {
-        //zapisywanie do pliku usrednionych parametrow
-
-        String bufM = "", bufI="";
-        for(int col=0; col<simSteps; col++) {
-            double sumM=0;
-            double sumI=0;
-            for (int row = 0; row < realizations; row++) {
-                sumM += M.get(row).get(col);
-                sumI += I.get(row).get(col);
-            }
-            bufM += (String.format("%.3f",(sumM / realizations)) + ";\n");
-            bufI += (String.format("%d",(int)(sumI / realizations)) + ";\n");
-        }
-        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("M", true, k, p, simSteps, realizations, size))), bufM);
-        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("I", true, k, p, simSteps, realizations, size))), bufI);
-        // System.out.println(bufM + " \n" + bufI);
-    }
-
-    public static String handleExceptions(Exception e)
-    {
-        String mes = new String("\nException catched!\n");
-        String localizedMessage = "Localized Message:\n" + e.getLocalizedMessage() +"\n";
-        String message = "Message:\n" + e.getMessage() + "\n";
-        String cause = "Cause\n" + e.getCause() + "\n";
-        String stackTrace = "StackTrace:\n" + e.getStackTrace() + "\n";
-        String _class = "Class:\n"+e.getClass()+"\n";
-        String suppressed= "Suppressed:\n" + e.getSuppressed() + "\n";
-        mes =  message + cause + stackTrace + localizedMessage + _class + suppressed;
-        return mes;
-   }
 }
+

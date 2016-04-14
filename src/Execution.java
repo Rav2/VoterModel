@@ -4,6 +4,7 @@ import java.util.ArrayList;
 public class Execution {
     Execution( int fixedDegree, double probab, int simSteps, int realizations, int size, File aplFile, FileWriter aplWriter) {
         try {
+
             //TOPOLOGY
             System.out.printf("\nStarting a new Execution with k=%d, p=%f, simSteps=%d, size=%d\n", fixedDegree, probab,  simSteps, size);
 
