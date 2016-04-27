@@ -12,14 +12,14 @@ public class N {
             int fixedDegree = deg;
             int simulationSteps = 5;
             int realizations = 10;
-            int size = 100;
+            int size = 10;
             File aplFile = new File("./output/" + "apl" + "_k" + fixedDegree + "_steps" + simulationSteps
                     + "_real" + realizations + "_N" + size + ".txt");
             FileWriter aplWriter = new FileWriter(aplFile);
-            //double probability = 0.0;
-            for (double probability = 0.0; probability < 1; probability += 0.05) {
+            double probability = 0.0;
+            //for (double probability = 0.0; probability < 1; probability += 0.05) {
                 new Execution(fixedDegree, probability, simulationSteps, realizations, size, aplFile, aplWriter);
-            }
+            //}
         }
         koniec = currentTimeMillis();
         long delta = koniec - start;

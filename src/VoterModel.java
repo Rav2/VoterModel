@@ -16,6 +16,7 @@ public class VoterModel {
 	int k;
 	double p;
 	int simSteps;
+	ArrayList<ArrayList<Double>> MAbs = new ArrayList<ArrayList<Double>>(size);
 	ArrayList<ArrayList<Double>> M = new ArrayList<ArrayList<Double>>(size);
 	ArrayList<ArrayList<Integer>> I = new ArrayList<ArrayList<Integer>>(size);
 
@@ -68,14 +69,18 @@ public class VoterModel {
 
 		File magnetizationFile = new File(Miscellaneous.makeFileName("M", false, k, p, simSteps, numberOfRealizations, size));
 		FileWriter magnetizationFileWriter;
+		magnetizationFileWriter = new FileWriter(magnetizationFile);
+		File magnetizationAbsFile = new File(Miscellaneous.makeFileName("MAbs", false, k, p, simSteps, numberOfRealizations, size));
+		FileWriter magnetizationAbsFileWriter;
+		magnetizationAbsFileWriter = new FileWriter(magnetizationAbsFile);
 		File interfacesFile = new File(Miscellaneous.makeFileName("I", false, k, p, simSteps, numberOfRealizations, size));
 		FileWriter interfacesFileWriter;
-		magnetizationFileWriter = new FileWriter(magnetizationFile);
 		interfacesFileWriter = new FileWriter(interfacesFile);
 
 		for (int k = 0; k < numberOfRealizations; k++){
 			drawStates(size);	//los stanow
 			M.add(new ArrayList<Double>());
+			MAbs.add(new ArrayList<Double>());
 			I.add(new ArrayList<Integer>());
 			for (int i = 0; i < simSteps; i++){
 				for (int j = 0; j < size; j++){
@@ -105,24 +110,29 @@ public class VoterModel {
 				interfaces();
 				//zapis do pliku
 				magnetizationFileWriter = new FileWriter(magnetizationFile,true);
+				magnetizationAbsFileWriter = new FileWriter(magnetizationAbsFile,true);
 				interfacesFileWriter = new FileWriter(interfacesFile,true);
-				Miscellaneous.writeToFile(magnetizationFileWriter, String.format("%.2f;", Math.round(Math.abs(magnetization) * 100.0) / 100.0));
+				Miscellaneous.writeToFile(magnetizationAbsFileWriter, String.format("%.2f;", Math.round(Math.abs(magnetization) * 100.0) / 100.0));
+				Miscellaneous.writeToFile(magnetizationFileWriter, String.format("%.2f;", Math.round(magnetization * 100.0) / 100.0));
 				Miscellaneous.writeToFile(interfacesFileWriter,  Integer.toString(interfaces) + ";" );
 
 				//uzupełnianie tablic do usrednienia
-				M.get(k).add(Math.round(Math.abs(magnetization) * 100.0) / 100.0);
+				MAbs.get(k).add(Math.round(Math.abs(magnetization) * 100.0) / 100.0);
+				M.get(k).add(Math.round(magnetization * 100.0) / 100.0);
 				I.get(k).add(interfaces);
 
 			}
+			magnetizationAbsFileWriter = new FileWriter(magnetizationAbsFile,true);
+			Miscellaneous.writeToFile(magnetizationAbsFileWriter, "\n");
 			magnetizationFileWriter = new FileWriter(magnetizationFile,true);
-			interfacesFileWriter = new FileWriter(interfacesFile,true);
 			Miscellaneous.writeToFile(magnetizationFileWriter, "\n");
+			interfacesFileWriter = new FileWriter(interfacesFile,true);
 			Miscellaneous.writeToFile(interfacesFileWriter,  "\n");
 
 		}
 
 
-		Miscellaneous.averageParametersToFile(k, p, simSteps, size, numberOfRealizations, M, I);
+		Miscellaneous.averageParametersToFile(k, p, simSteps, size, numberOfRealizations, M, MAbs, I);
 	}
 
 

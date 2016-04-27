@@ -49,21 +49,28 @@ public class Miscellaneous
 
 
 
-    public static void averageParametersToFile(int k, double p, int simSteps, int size, int realizations, ArrayList<ArrayList<Double>> M, ArrayList<ArrayList<Integer>> I) throws IOException {
+    public static void averageParametersToFile(int k, double p, int simSteps,
+                                               int size, int realizations, ArrayList<ArrayList<Double>> M,
+                                               ArrayList<ArrayList<Double>> MAbs,
+                                               ArrayList<ArrayList<Integer>> I) throws IOException {
         //zapisywanie do pliku usrednionych parametrow
 
-        String bufM = "", bufI="";
+        String bufM = "", bufMAbs="", bufI="";
         for(int col=0; col<simSteps; col++) {
             double sumM=0;
+            double sumMAbs=0;
             double sumI=0;
             for (int row = 0; row < realizations; row++) {
                 sumM += M.get(row).get(col);
+                sumMAbs += MAbs.get(row).get(col);
                 sumI += I.get(row).get(col);
             }
             bufM += (String.format("%.3f",(sumM / realizations)) + ";\n");
+            bufMAbs += (String.format("%.3f",(sumMAbs / realizations)) + ";\n");
             bufI += (String.format("%d",(int)(sumI / realizations)) + ";\n");
         }
         writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("M", true, k, p, simSteps, realizations, size))), bufM);
+        writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("MAbs", true, k, p, simSteps, realizations, size))), bufMAbs);
         writeToFile(new FileWriter(new File(Miscellaneous.makeFileName("I", true, k, p, simSteps, realizations, size))), bufI);
         // System.out.println(bufM + " \n" + bufI);
     }
